@@ -25,6 +25,7 @@ add_subdirectory(posix)
 add_subdirectory(rcX)
 add_subdirectory(vxworks)
 add_subdirectory(win32)
+add_subdirectory(kos)
 
 add_subdirectory(utils)
 
