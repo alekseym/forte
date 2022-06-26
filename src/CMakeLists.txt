@@ -12,6 +12,11 @@
 # *     - initial API and implementation and/or initial documentation
 # *******************************************************************************/
 
+
+if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
+include (platform/nk)
+endif()
+
 set(FORTE_EXTERNAL_MODULES_DIRECTORY "" CACHE PATH "Path to a directory with FORTE modules located outside of the FORTE source code")
 SET(FORTE_MODULE_LIST modules;com;external)
 forte_create_modules_file("${FORTE_MODULE_LIST}")
@@ -233,6 +238,12 @@ FOREACH(FILE ${SOURCE_FILES})
 ENDFOREACH(FILE)
 FILE(WRITE ${CMAKE_BINARY_DIR}/file_list.txt "${WRITE_FILE}")
 
+
+include(CMakePrintHelpers)
+message("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRr")
+cmake_print_variables(CMAKE_BINARY_DIR)
+
+
 ######################################################################################
 # Architecutre to build forte on
 ######################################################################################
@@ -263,7 +274,29 @@ add_library(FORTE_LITE OBJECT ${SOURCE_FILES}) #no executables.
 if(FORTE_BUILD_EXECUTABLE)
   ADD_EXECUTABLE (forte $<TARGET_OBJECTS:FORTE_LITE> ${SOURCE_EXECUTABLE_CPP} ${FORTE_EXECUTABLE_H})
   set_target_properties(forte PROPERTIES LINK_FLAGS "${link_flags}")
-  TARGET_LINK_LIBRARIES (forte ${LINK_LIBRARY})
+
+if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
+  nk_build_edl_files (forte_edl_files NK_MODULE "FORTE" EDL "${CMAKE_SOURCE_DIR}/resources/edl/Forte.edl")
+
+  ADD_DEPENDENCIES (forte forte_edl_files)
+endif()
+
+  TARGET_LINK_LIBRARIES (forte ${LINK_LIBRARY} ${${PROJECT_NAME}_LIBS} ${vfs_CLIENT_LIB})
+
+#  TARGET_LINK_LIBRARIES (forte ${LINK_LIBRARY})
+
+  set_target_properties (forte PROPERTIES ${vfs_ENTITY}_REPLACEMENT "")
+
+#  include(CMakePrintHelpers)
+#  cmake_print_variables(forte_edl_files)
+#  message("Helloooooooooooooooooooooooooooo")
+
+
+#add_dependencies (Server server_edl_files)
+#target_link_libraries (Server ${${PROJECT_NAME}_LIBS} ${vfs_CLIENT_LIB})
+#set_target_properties (Server PROPERTIES ${vfs_ENTITY}_REPLACEMENT "")
+
+
   ADD_DEPENDENCIES (forte FORTE_LITE)
   install(TARGETS forte RUNTIME DESTINATION bin)
   message("Building executable")
@@ -292,7 +325,14 @@ endif(FORTE_BUILD_SHARED_LIBRARY)
 #######################################################################################
 
 #forte init is needed for the temporary forte library, which then is linked to the main.cpp
-ADD_CUSTOM_TARGET(forte_init_generator COMMAND ${CMAKE_COMMAND} -DFORTE_BINARY_DIR:STRING="${CMAKE_BINARY_DIR}" -DFORTE_SOURCE_DIR:STRING="${CMAKE_SOURCE_DIR}" -DFORTE_USE_64BIT_DATATYPES:STRING="${FORTE_USE_64BIT_DATATYPES}" -DFORTE_USE_REAL_DATATYPE:STRING="${FORTE_USE_REAL_DATATYPE}" -DFORTE_USE_LREAL_DATATYPE:STRING="${FORTE_USE_LREAL_DATATYPE}" -DFORTE_SUPPORT_ARRAYS:STRING="${FORTE_SUPPORT_ARRAYS}" -DFORTE_LITTLE_ENDIAN:STRING=${FORTE_LITTLE_ENDIAN} -DFORTE_BIG_ENDIAN:STRING=${FORTE_BIG_ENDIAN} -DFORTE_LOGLEVEL:STRING="${FORTE_LOGLEVEL}" -P ${FORTE_BUILDSUPPORT_DIRECTORY}/generate_init.cmake)  #
+
+
+if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
+ADD_CUSTOM_TARGET(forte_init_generator COMMAND ${CMAKE_COMMAND} -DFORTE_BINARY_DIR:STRING="${CMAKE_BINARY_DIR}" -DFORTE_SOURCE_DIR:STRING="${CMAKE_SOURCE_DIR}/forte" -DFORTE_USE_64BIT_DATATYPES:STRING="${FORTE_USE_64BIT_DATATYPES}" -DFORTE_USE_REAL_DATATYPE:STRING="${FORTE_USE_REAL_DATATYPE}" -DFORTE_USE_LREAL_DATATYPE:STRING="${FORTE_USE_LREAL_DATATYPE}" -DFORTE_SUPPORT_ARRAYS:STRING="${FORTE_SUPPORT_ARRAYS}" -DFORTE_LITTLE_ENDIAN:STRING=${FORTE_LITTLE_ENDIAN} -DFORTE_BIG_ENDIAN:STRING=${FORTE_BIG_ENDIAN} -DFORTE_LOGLEVEL:STRING="${FORTE_LOGLEVEL}" -P ${FORTE_BUILDSUPPORT_DIRECTORY}/generate_init.cmake)  #
+else()
+ADD_CUSTOM_TARGET(forte_init_generator COMMAND ${CMAKE_COMMAND} -DFORTE_BINARY_DIR:STRING="${CMAKE_BINARY_DIR}" -DFORTE_SOURCE_DIR:STRING="${CMAKE_SOURCE_DIR}" -DFORTE_USE_64BIT_DATATYPES:STRING="${FORTE_USE_64BIT_DATATYPES}" -DFORTE_USE_REAL_DATATYPE:STRING="${FORTE_USE_REAL_DATATYPE}" -DFORTE_USE_LREAL_DATATYPE:STRING="${FORTE_USE_LREAL_DATATYPE}" -DFORTE_SUPPORT_ARRAYS:STRING="${FORTE_SUPPORT_ARRAYS}" -DFORTE_LITTLE_ENDIAN:STRING=${FORTE_LITTLE_ENDIAN} -DFORTE_BIG_ENDIAN:STRING=${FORTE_BIG_ENDIAN} -DFORTE_LOGLEVEL:STRING="${FORTE_LOGLEVEL}" -P ${FORTE_BUILDSUPPORT_DIRECTORY}/generate_init.cmake) 
+endif()
+
 ADD_DEPENDENCIES (forte_init_generator forte_generate_modules_cmake_files)
 ADD_DEPENDENCIES (FORTE_LITE forte_init_generator)
 
@@ -300,7 +340,12 @@ ADD_CUSTOM_TARGET(forte_generate_modules_cmake_files COMMAND ${CMAKE_COMMAND}
   -DFORTE_MODULE_LIST:LISTS="${FORTE_MODULE_LIST}"
   -P ${FORTE_BUILDSUPPORT_DIRECTORY}/generate_modules_cmake_file.cmake)
 
+
+if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
 ADD_CUSTOM_TARGET(forte_stringlist_generator COMMAND ${CMAKE_COMMAND} -DFORTE_LINKED_STRINGDICT:STRING="${FORTE_LINKED_STRINGDICT}" -DFORTE_BINARY_DIR:STRING="${CMAKE_BINARY_DIR}" -DFORTE_SOURCE_DIR:STRING="${CMAKE_CURRENT_SOURCE_DIR}" -P ${FORTE_BUILDSUPPORT_DIRECTORY}/generate_stringlist.cmake)
+else()
+ADD_CUSTOM_TARGET(forte_stringlist_generator COMMAND ${CMAKE_COMMAND} -DFORTE_LINKED_STRINGDICT:STRING="${FORTE_LINKED_STRINGDICT}" -DFORTE_BINARY_DIR:STRING="${CMAKE_BINARY_DIR}" -DFORTE_SOURCE_DIR:STRING="${CMAKE_CURRENT_SOURCE_DIR}" -P ${FORTE_BUILDSUPPORT_DIRECTORY}/generate_stringlist.cmake)
+endif()
 ADD_DEPENDENCIES (FORTE_LITE forte_stringlist_generator)
 ADD_DEPENDENCIES (forte_stringlist_generator forte_generate_modules_cmake_files)
 

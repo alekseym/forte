@@ -18,6 +18,14 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(FORTE)
 
+include(CMakePrintHelpers)
+cmake_print_variables(FORTE_ARCHITECTURE)
+
+#include (platform/nk)
+#nk_build_edl_files (forte_edl_files NK_MODULE "forte" EDL "${CMAKE_SOURCE_DIR}/resources/edl/Forte.edl")
+
+
+
 set(FORTE_USE_STD_11 OFF CACHE BOOL "Enable c++11 for the project")
 mark_as_advanced(FORTE_USE_STD_11)
 

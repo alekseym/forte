@@ -19,6 +19,25 @@ if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
 
   forte_add_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   
+#  include (platform/nk)
+#  nk_build_edl_files (forte_edl_files NK_MODULE "forte" EDL "${CMAKE_SOURCE_DIR}/resources/edl/Forte.edl")
+
+#include(CMakePrintHelpers)
+#cmake_print_variables(forte_edl_files)
+#cmake_print_variables(CMAKE_SOURCE_DIR)
+
+
+
+#forte_add_dependencies (server_edl_files)
+#forte_add_link_library (${${PROJECT_NAME}_LIBS})
+#forte_add_link_library (${vfs_CLIENT_LIB})
+
+
+
+#  forte_add_sourcefile_hcpp(forte_edl_files)
+
+  forte_add_include_directories(${CMAKE_BINARY_DIR})
+
   forte_set_timer(pctimeha)
   
   forte_add_sourcefile_hcpp(forte_thread forte_sync forte_sem)

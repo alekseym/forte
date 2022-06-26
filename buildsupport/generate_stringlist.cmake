@@ -11,9 +11,11 @@
 # *******************************************************************************/
 
 MESSAGE(Generate Stringlist)
-MESSAGE("Source Dir: ${FORTE_SOURCE_DIR}")
-MESSAGE("Binary Dir: ${FORTE_BINARY_DIR}")
+MESSAGE("Source Dir (for Stringlist): ${FORTE_SOURCE_DIR}")
+MESSAGE("Binary Dir: (for Stringlist) ${FORTE_BINARY_DIR}")
 FILE(STRINGS ${FORTE_BINARY_DIR}/file_list.txt FBLIB_STRUCT)
+
+
 
 
 if(EXISTS ${FORTE_BINARY_DIR}/file_test_list.txt)
@@ -121,7 +123,26 @@ CONFIGURE_FILE(${FORTE_SOURCE_DIR}/stringlist.h.in ${FORTE_BINARY_DIR}/stringlis
 CONFIGURE_FILE(${FORTE_SOURCE_DIR}/stringlist.cpp.in ${FORTE_BINARY_DIR}/stringlist_new.cpp)
 
 # only copy files if different
+if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
+
+message("DOESN'T WORK stringlist.h")
+
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FORTE_BINARY_DIR}/stringlist_new.h ${FORTE_BINARY_DIR}/forte/stringlist.h OUTPUT_QUIET ERROR_QUIET )
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FORTE_BINARY_DIR}/stringlist_new.cpp ${FORTE_BINARY_DIR}/forte/stringlist.cpp OUTPUT_QUIET ERROR_QUIET )
+
+else()
+
 execute_process( COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FORTE_BINARY_DIR}/stringlist_new.h ${FORTE_BINARY_DIR}/stringlist.h OUTPUT_QUIET ERROR_QUIET )
 execute_process( COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FORTE_BINARY_DIR}/stringlist_new.cpp ${FORTE_BINARY_DIR}/stringlist.cpp OUTPUT_QUIET ERROR_QUIET )
+
+
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FORTE_BINARY_DIR}/stringlist.h ${FORTE_BINARY_DIR}/forte/stringlist.h)
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy_if_different ${FORTE_BINARY_DIR}/stringlist.cpp ${FORTE_BINARY_DIR}/forte/stringlist.cpp OUTPUT_QUIET ERROR_QUIET )
+
+
+
+
+endif()
+
 file(REMOVE ${FORTE_BINARY_DIR}/stringlist_new.h)
 file(REMOVE ${FORTE_BINARY_DIR}/stringlist_new.cpp)

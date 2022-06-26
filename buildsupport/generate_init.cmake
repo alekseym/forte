@@ -10,10 +10,25 @@
 #     Gerhard Ebenhofer and Ingo Hegny - initial API and implementation and/or initial documentation
 # *******************************************************************************/
 
-MESSAGE("Generate Initfunction")
+MESSAGE("Generate Initfunction ")
 MESSAGE("Source Dir: ${FORTE_SOURCE_DIR}")
 MESSAGE("Binary Dir: ${FORTE_BINARY_DIR}")
-FILE(STRINGS ${CMAKE_BINARY_DIR}/../file_list.txt FILE_NAMES)
+
+
+
+#if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
+#FILE(STRINGS ${CMAKE_BINARY_DIR}/file_list.txt FILE_NAMES)
+
+
+
+
+#elseif()
+#FILE(STRINGS ${CMAKE_BINARY_DIR}/../file_list.txt FILE_NAMES)
+
+#endif()
+
+
+
 
 #######################################################################################
 # Create Forte-Executeable with all Functionblocks
@@ -119,6 +134,14 @@ CONFIGURE_FILE(${FORTE_SOURCE_DIR}/src/forteinit.h.in ${FORTE_BINARY_DIR}/fortei
 # only copy files if different
 execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files ${FORTE_BINARY_DIR}/forteinit_new.cpp ${FORTE_BINARY_DIR}/forteinit.cpp RESULT_VARIABLE test_not_successful_cpp OUTPUT_QUIET ERROR_QUIET )
 execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files ${FORTE_BINARY_DIR}/forteinit_new.h ${FORTE_BINARY_DIR}/forteinit.h RESULT_VARIABLE test_not_successful_h OUTPUT_QUIET ERROR_QUIET )
+
+
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy ${FORTE_BINARY_DIR}/forteinit_new.cpp ${FORTE_BINARY_DIR}/forte/forteinit.cpp)
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy ${FORTE_BINARY_DIR}/forteinit_new.h ${FORTE_BINARY_DIR}/forte/forteinit.h)
+
+
+
+
 
 IF(test_not_successful_cpp)
   file(REMOVE ${FORTE_BINARY_DIR}/forteinit.cpp)
