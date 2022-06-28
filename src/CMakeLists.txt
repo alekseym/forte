@@ -272,20 +272,24 @@ GET_PROPERTY(link_flags GLOBAL PROPERTY FORTE_LINK_FLAGS)
 add_library(FORTE_LITE OBJECT ${SOURCE_FILES}) #no executables.
 
 if(FORTE_BUILD_EXECUTABLE)
-  ADD_EXECUTABLE (forte $<TARGET_OBJECTS:FORTE_LITE> ${SOURCE_EXECUTABLE_CPP} ${FORTE_EXECUTABLE_H})
-  set_target_properties(forte PROPERTIES LINK_FLAGS "${link_flags}")
+  ADD_EXECUTABLE (Forte $<TARGET_OBJECTS:FORTE_LITE> ${SOURCE_EXECUTABLE_CPP} ${FORTE_EXECUTABLE_H})### f -> F
+  set_target_properties(Forte PROPERTIES LINK_FLAGS "${link_flags}")###
 
 if("${FORTE_ARCHITECTURE}" STREQUAL "kos")
+  message(" Try copy edl Helloooooooooooooooooooooooooooo")
   nk_build_edl_files (forte_edl_files NK_MODULE "FORTE" EDL "${CMAKE_SOURCE_DIR}/resources/edl/Forte.edl")
+  message("Helloooooooooooooooooooooooooooo")
+  execute_process( COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/resources/edl/Forte.edl" ${CMAKE_SOURCE_DIR}/build/_headers_/forte/Forte.edl)
 
-  ADD_DEPENDENCIES (forte forte_edl_files)
+
+  ADD_DEPENDENCIES (Forte forte_edl_files)###
 endif()
 
-  TARGET_LINK_LIBRARIES (forte ${LINK_LIBRARY} ${${PROJECT_NAME}_LIBS} ${vfs_CLIENT_LIB})
+  TARGET_LINK_LIBRARIES (Forte ${LINK_LIBRARY} ${${PROJECT_NAME}_LIBS} ${vfs_CLIENT_LIB})###
 
 #  TARGET_LINK_LIBRARIES (forte ${LINK_LIBRARY})
 
-  set_target_properties (forte PROPERTIES ${vfs_ENTITY}_REPLACEMENT "")
+  set_target_properties (Forte PROPERTIES ${vfs_ENTITY}_REPLACEMENT "")###
 
 #  include(CMakePrintHelpers)
 #  cmake_print_variables(forte_edl_files)
@@ -297,8 +301,8 @@ endif()
 #set_target_properties (Server PROPERTIES ${vfs_ENTITY}_REPLACEMENT "")
 
 
-  ADD_DEPENDENCIES (forte FORTE_LITE)
-  install(TARGETS forte RUNTIME DESTINATION bin)
+  ADD_DEPENDENCIES (Forte FORTE_LITE)###
+  install(TARGETS Forte RUNTIME DESTINATION bin)###
   message("Building executable")
 endif(FORTE_BUILD_EXECUTABLE)
 

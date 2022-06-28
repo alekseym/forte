@@ -328,7 +328,8 @@ if(FORTE_LINKED_STRINGDICT)
   add_library(forte_stringlist_externals STATIC ${SOURCE_FILES})
   
   if(FORTE_BUILD_EXECUTABLE)
-      ADD_DEPENDENCIES (forte forte_stringlist_externals)
+      #ADD_DEPENDENCIES (forte forte_stringlist_externals)
+      ADD_DEPENDENCIES (Forte forte_stringlist_externals)#forte -> Forte in Src cmake
   endif(FORTE_BUILD_EXECUTABLE)
 
   if(FORTE_BUILD_STATIC_LIBRARY)

@@ -73,7 +73,6 @@ void createDev(const char *pa_acMGRID){
 }
 
 int main(int argc, char *arg[]){
-   while(1);
   
   DEVLOG_INFO("FORTE try start....\n");
 
