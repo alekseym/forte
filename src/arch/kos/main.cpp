@@ -18,6 +18,15 @@
 
 #include "../utils/mainparam_utils.h"
 
+#include <platform/platform.h>
+#include <kos_net.h>
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
+
 #ifdef FORTE_ROS
 #include <ros/ros.h>
 #endif //FORTE_ROS
@@ -72,9 +81,45 @@ void createDev(const char *pa_acMGRID){
   delete poDev;
 }
 
+
+void FileReadTest()
+{
+    std::ifstream userListFile;
+    std::string userListFileName = "/c/forte.fboot";
+
+    userListFile.open(userListFileName);
+    if (!userListFile.is_open())
+    {
+       DEVLOG_INFO("FORTE fail read fboot \n");
+       return;
+    }
+
+    DEVLOG_INFO("FORTE read fboot - OK \n");
+
+    userListFile.close();
+}
+
+
+
 int main(int argc, char *arg[]){
   
   DEVLOG_INFO("FORTE try start....\n");
+
+  FileReadTest();
+
+/*#define server_addr "10.0.2.2"
+    // Add network interface. 
+    if (!configure_net_iface(DEFAULT_INTERFACE, "10.0.2.10", DEFAULT_MASK, DEFAULT_GATEWAY, DEFAULT_MTU)) {
+
+        perror(DEFAULT_INTERFACE ": network iface configuration failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!list_network_ifaces()) {
+        perror("listing of host network interfaces failes\n");
+        return EXIT_FAILURE;
+    }*/
+
 
 
 
@@ -90,7 +135,20 @@ int main(int argc, char *arg[]){
   }
 #endif //FORTE_ROS
 
-  const char *pIpPort = parseCommandLineArguments(argc, arg);
+  char kosArgv[argc+1][200];
+  int i =0;
+  for (int i=0;i<argc;i++) {
+    strcpy (kosArgv[i],arg[i]);
+  }
+  strcpy (kosArgv[i++],"-f");
+  strcpy (kosArgv[i],"//data//forte.fboot");
+
+//  const char *pIpPort = parseCommandLineArguments(argc, arg);
+
+  const char *pIpPort = parseCommandLineArguments(i, (char**)kosArgv);
+
+
+
   if((0 != strlen(pIpPort)) && (NULL != strchr(pIpPort, ':'))){
     createDev(pIpPort);
   }

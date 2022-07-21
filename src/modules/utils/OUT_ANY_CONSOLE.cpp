@@ -15,6 +15,10 @@
 #include "OUT_ANY_CONSOLE_gen.cpp"
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
 DEFINE_FIRMWARE_FB(FORTE_OUT_ANY_CONSOLE, g_nStringIdOUT_ANY_CONSOLE)
 
   const CStringDictionary::TStringId FORTE_OUT_ANY_CONSOLE::scm_anDataInputNames[] =
@@ -49,6 +53,9 @@ const SFBInterfaceSpec FORTE_OUT_ANY_CONSOLE::scm_stFBInterfaceSpec = { 1,
 const TForteInt16 FORTE_OUT_ANY_CONSOLE::scm_maxStringBufSize = 100;
 
 void FORTE_OUT_ANY_CONSOLE::executeEvent(int pa_nEIID) {
+
+  fprintf(stderr,"FORTE_OUT_ANY_CONSOLE::executeEvent!\n");
+
   switch (pa_nEIID) {
   case scm_nEventREQID:
     QO() = QI();
@@ -88,6 +95,8 @@ void FORTE_OUT_ANY_CONSOLE::executeEvent(int pa_nEIID) {
       }
 
       DEVLOG_INFO(" %s = %s\n", strbuf1, sOutput.getValue());
+
+      fprintf(stderr," %s = %s\n", strbuf1, sOutput.getValue());
     }
     sendOutputEvent(scm_nEventCNFID);
     break;

@@ -130,7 +130,7 @@ set(FORTE_SUPPORT_BOOT_FILE ON CACHE BOOL "Enable FORTE boot file loading on FOR
 mark_as_advanced(FORTE_SUPPORT_BOOT_FILE)
 if(FORTE_SUPPORT_BOOT_FILE)
   forte_add_definition("-DFORTE_SUPPORT_BOOT_FILE")
-  SET(FORTE_BootfileLocation "forte.fboot" CACHE STRING "Path to the bootfile")
+  SET(FORTE_BootfileLocation "/c/forte.fboot" CACHE STRING "Path to the bootfile")# "forte.fboot"
   forte_add_custom_configuration("#define FORTE_BOOT_FILE_LOCATION \"${FORTE_BootfileLocation}\"")
   forte_add_custom_configuration("extern char* gCommandLineBootFile\;")
   mark_as_advanced(FORTE_BootfileLocation)
